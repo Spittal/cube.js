@@ -246,5 +246,6 @@ export {
   flattenFilters,
   getQueryMembers,
   getOrderMembersFromOrder,
-  GRANULARITIES
+  GRANULARITIES,
+  CubejsApi
 } from './utils';
