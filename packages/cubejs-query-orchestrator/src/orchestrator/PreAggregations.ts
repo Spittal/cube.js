@@ -723,7 +723,10 @@ class PreAggregationLoader {
   }
 
   protected getStreamingOptions(): StreamOptions {
-    return { batchSize: 1000, highWaterMark: 2000 }
+    return {
+      // Default: 16384 (16KB), or 16 for objectMode streams. PostgreSQL/MySQL use object streams
+      highWaterMark: 500
+    };
   }
 
   /**
@@ -749,7 +752,10 @@ class PreAggregationLoader {
         ? client.stream(`SELECT * FROM ${table}`, [], this.getStreamingOptions())
         : client.downloadTable(table, capabilities)
     );
-    tableData.types = await saveCancelFn(client.tableColumnTypes(table));
+
+    if (!tableData.types) {
+      tableData.types = await saveCancelFn(client.tableColumnTypes(table));
+    }
 
     return tableData;
   }
